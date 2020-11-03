@@ -23,6 +23,10 @@ class DataTable:
         self.__terminals: CoordSet = set()
 
     @property
+    def gamma(self):
+        return 1.0
+
+    @property
     def width(self) -> int:
         return self.__width
 
