@@ -17,8 +17,8 @@ class DataTable:
     def __init__(self, width: int, height: int):
         self.__width = width
         self.__height = height
-        self.__rewards: GridDict = {}
-        self.__utilities: GridDict = {}
+        self.rewards: GridDict = {}
+        self.utilities: GridDict = {}
         self.__start: Coordinate = (0, 0)
         self.__terminals: CoordSet = set()
 
@@ -34,14 +34,6 @@ class DataTable:
     def height(self) -> int:
         return self.__height
 
-    @property
-    def rewards(self) -> GridDict:
-        return self.__rewards
-
-    @property
-    def utilities(self) -> GridDict:
-        return self.__utilities
-
     def add_reward(self, coord: Coordinate,
                    reward: float) -> float:
         """
@@ -52,11 +44,18 @@ class DataTable:
         :return: reward value.
         """
         self.rewards[coord] = reward
-        self.utilities[coord] = 0
+        self.utilities[coord] = reward
         return reward
 
-    def get_adjacent_reward(self, coord: Coordinate,
-                            direction: Direction) -> float:
+    def __get_adjacent_coord(self, coord: Coordinate,
+                             direction: Direction) -> Coordinate:
+        """
+        Get adjacent coordinate.
+        Bounce back to current coordinate if there is no actual grid at the adjacent direction.
+        :param coord: Original coordinate.
+        :param direction: One direction to adjacent grid.
+        :return: Adjacent grid, or current grid if adjacent grid does not exist.
+        """
         if direction == Direction.UP:
             adj_coord = (coord[0], coord[1] - 1)
         elif direction == Direction.DOWN:
@@ -66,12 +65,22 @@ class DataTable:
         else:
             adj_coord = (coord[0] + 1, coord[1])
 
-        reward = self.__rewards.get(adj_coord)
-        if reward is None:
-            reward = self.__rewards.get(coord)
-        if reward is None:
-            reward = 0
+        if adj_coord not in self.rewards:
+            return coord
+        else:
+            return adj_coord
+
+    def get_adjacent_reward(self, coord: Coordinate,
+                            direction: Direction) -> float:
+        adj_coord = self.__get_adjacent_coord(coord, direction)
+        reward = self.rewards.get(adj_coord, 0)
         return reward
+
+    def get_adjacent_utility(self, coord: Coordinate,
+                             direction: Direction) -> float:
+        adj_coord = self.__get_adjacent_coord(coord, direction)
+        utility = self.utilities.get(adj_coord, 0)
+        return utility
 
     def set_start(self, coord: Coordinate) -> Coordinate:
         self.__start = coord
@@ -82,7 +91,7 @@ class DataTable:
         return self.__start
 
     def add_terminal(self, coord: Coordinate) -> CoordSet:
-        assert coord in self.__rewards
+        assert coord in self.rewards
         self.__terminals.add(coord)
         return self.__terminals
 
