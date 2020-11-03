@@ -17,8 +17,8 @@ class DataTable:
     def __init__(self, width: int, height: int):
         self.__width = width
         self.__height = height
-        self.__reward_data: GridDict = {}
-        self.__utility_data: GridDict = {}
+        self.__rewards: GridDict = {}
+        self.__utilities: GridDict = {}
         self.__start: Coordinate = (0, 0)
         self.__terminals: CoordSet = set()
 
@@ -35,12 +35,12 @@ class DataTable:
         return self.__height
 
     @property
-    def reward_data(self) -> GridDict:
-        return self.__reward_data
+    def rewards(self) -> GridDict:
+        return self.__rewards
 
     @property
-    def utility_data(self) -> GridDict:
-        return self.__utility_data
+    def utilities(self) -> GridDict:
+        return self.__utilities
 
     def add_reward(self, coord: Coordinate,
                    reward: float) -> float:
@@ -51,8 +51,8 @@ class DataTable:
         :param reward: reward value.
         :return: reward value.
         """
-        self.reward_data[coord] = reward
-        self.utility_data[coord] = 0
+        self.rewards[coord] = reward
+        self.utilities[coord] = 0
         return reward
 
     def get_adjacent_reward(self, coord: Coordinate,
@@ -66,9 +66,9 @@ class DataTable:
         else:
             adj_coord = (coord[0] + 1, coord[1])
 
-        reward = self.__reward_data.get(adj_coord)
+        reward = self.__rewards.get(adj_coord)
         if reward is None:
-            reward = self.__reward_data.get(coord)
+            reward = self.__rewards.get(coord)
         if reward is None:
             reward = 0
         return reward
@@ -82,9 +82,8 @@ class DataTable:
         return self.__start
 
     def add_terminal(self, coord: Coordinate) -> CoordSet:
-        assert coord in self.__reward_data
+        assert coord in self.__rewards
         self.__terminals.add(coord)
-        self.__utility_data[coord] = self.__reward_data[coord]
         return self.__terminals
 
     @property
