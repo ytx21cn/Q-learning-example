@@ -40,7 +40,15 @@ class DataTable:
 
     def add_reward(self, coord: Coordinate,
                    reward: float) -> float:
+        """
+        Add reward data.
+        Also set for utility data for that coordinate to 0.
+        :param coord: coordinate to add to the grid.
+        :param reward: reward value.
+        :return: reward value.
+        """
         self.reward_data[coord] = reward
+        self.utility_data[coord] = 0
         return reward
 
     def set_start(self, coord: Coordinate) -> Coordinate:
@@ -52,7 +60,9 @@ class DataTable:
         return self.__start
 
     def add_terminal(self, coord: Coordinate) -> CoordSet:
+        assert coord in self.__reward_data
         self.__terminals.add(coord)
+        self.__utility_data[coord] = self.__reward_data[coord]
         return self.__terminals
 
     @property
