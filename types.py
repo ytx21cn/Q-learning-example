@@ -1,8 +1,15 @@
-from typing import Tuple, Dict, Union
+from enum import IntEnum
+from typing import Tuple, Dict
 
 Coordinate = Tuple[int, int]
-Value = Union[float, None]
 GridDict = Dict[Coordinate, float]
+
+
+class Direction(IntEnum):
+    UP = 1
+    DOWN = 2
+    LEFT = 3
+    RIGHT = 4
 
 
 class DataTable:
@@ -27,3 +34,8 @@ class DataTable:
     @property
     def utility_data(self) -> GridDict:
         return self.__utility_data
+
+    def add_reward(self, coord: Coordinate,
+                   reward: float) -> float:
+        self.reward_data[coord] = reward
+        return reward
