@@ -1,7 +1,8 @@
 from enum import IntEnum
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Set
 
 Coordinate = Tuple[int, int]
+CoordSet = Set[Coordinate]
 GridDict = Dict[Coordinate, float]
 
 
@@ -18,6 +19,8 @@ class DataTable:
         self.__height = height
         self.__reward_data: GridDict = {}
         self.__utility_data: GridDict = {}
+        self.__start: Coordinate = (0, 0)
+        self.__terminals: CoordSet = set()
 
     @property
     def width(self) -> int:
@@ -39,3 +42,19 @@ class DataTable:
                    reward: float) -> float:
         self.reward_data[coord] = reward
         return reward
+
+    def set_start(self, coord: Coordinate) -> Coordinate:
+        self.__start = coord
+        return coord
+
+    @property
+    def start(self) -> Coordinate:
+        return self.__start
+
+    def add_terminal(self, coord: Coordinate) -> CoordSet:
+        self.__terminals.add(coord)
+        return self.__terminals
+
+    @property
+    def terminals(self) -> CoordSet:
+        return self.__terminals
