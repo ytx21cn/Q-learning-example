@@ -51,6 +51,24 @@ class DataTable:
         self.utility_data[coord] = 0
         return reward
 
+    def get_adjacent_reward(self, coord: Coordinate,
+                            direction: Direction) -> float:
+        if direction == Direction.UP:
+            adj_coord = (coord[0], coord[1] - 1)
+        elif direction == Direction.DOWN:
+            adj_coord = (coord[0], coord[1] + 1)
+        elif direction == Direction.LEFT:
+            adj_coord = (coord[0] - 1, coord[1])
+        else:
+            adj_coord = (coord[0] + 1, coord[1])
+
+        reward = self.__reward_data.get(adj_coord)
+        if reward is None:
+            reward = self.__reward_data.get(coord)
+        if reward is None:
+            reward = 0
+        return reward
+
     def set_start(self, coord: Coordinate) -> Coordinate:
         self.__start = coord
         return coord
